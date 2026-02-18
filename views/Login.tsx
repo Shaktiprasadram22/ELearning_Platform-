@@ -14,7 +14,12 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     login(email, role);
-    navigate('/dashboard');
+    // Redirect based on role
+    if (role === UserRole.INSTRUCTOR) {
+      navigate('/instructor');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   return (

@@ -2,15 +2,10 @@
 import { GoogleGenAI } from "@google/genai";
 
 export class AIService {
-  private ai: GoogleGenAI;
-
-  constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  }
-
   async solveDoubt(question: string, context: string) {
     try {
-      const response = await this.ai.models.generateContent({
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `
           Context: You are an expert tutor on the course titled "${context}". 

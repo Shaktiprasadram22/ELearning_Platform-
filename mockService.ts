@@ -1,5 +1,5 @@
 
-import { Course, UserRole } from './types';
+import { Course, UserRole, Contact } from './types';
 
 export const MOCK_COURSES: Course[] = [
   {
@@ -54,6 +54,59 @@ export const MOCK_COURSES: Course[] = [
     enrolled: 850,
     category: 'Design',
     content: []
+  }
+];
+
+export const MOCK_CONTACTS: Contact[] = [
+  {
+    id: 'u-sarah',
+    name: 'Sarah Drasner',
+    role: 'Instructor',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+    status: 'online',
+    lastMessage: 'The new module on Server Actions is live!',
+    lastMessageTime: '10:45 AM',
+    unreadCount: 2
+  },
+  {
+    id: 'u-gary',
+    name: 'Gary Simon',
+    role: 'Instructor',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Gary',
+    status: 'away',
+    lastMessage: 'Did you check the typography assignments?',
+    lastMessageTime: 'Yesterday',
+    unreadCount: 0
+  },
+  {
+    id: 'u-lee',
+    name: 'Lee Robinson',
+    role: 'Instructor',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lee',
+    status: 'online',
+    lastMessage: 'Welcome to the Next.js community!',
+    lastMessageTime: '2 days ago',
+    unreadCount: 0
+  },
+  {
+    id: 'u-alex',
+    name: 'Alex Johnson',
+    role: 'Student',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex',
+    status: 'offline',
+    lastMessage: 'Hey, do you want to collaborate on the project?',
+    lastMessageTime: '3 days ago',
+    unreadCount: 0
+  },
+  {
+    id: 'u-maria',
+    name: 'Maria Garcia',
+    role: 'Student',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maria',
+    status: 'online',
+    lastMessage: 'Thanks for the help with the CSS grid!',
+    lastMessageTime: 'Just now',
+    unreadCount: 0
   }
 ];
 

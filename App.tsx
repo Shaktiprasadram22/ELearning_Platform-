@@ -19,7 +19,12 @@ import {
   Sun,
   Moon,
   ChevronRight,
-  User as UserIcon
+  User as UserIcon,
+  CreditCard,
+  BarChart3,
+  MessageCircle,
+  Trophy,
+  Zap
 } from 'lucide-react';
 
 // View Components
@@ -29,18 +34,38 @@ import CoursePlayer from './views/CoursePlayer';
 import LiveClass from './views/LiveClass';
 import Community from './views/Community';
 import Login from './views/Login';
+import Subscription from './views/Subscription';
+import Certificates from './views/Certificates';
+import InstructorDashboard from './views/InstructorDashboard';
+import CreateCourse from './views/CreateCourse';
+import Chats from './views/Chats';
+import Achievements from './views/Achievements';
 
 const Sidebar = () => {
   const { user, logout } = useStore();
   const [isOpen, setIsOpen] = useState(true);
 
-  const navItems = [
+  const studentNavItems = [
     { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { label: 'My Courses', icon: BookOpen, path: '/courses' },
     { label: 'Live Classes', icon: Video, path: '/live' },
+    { label: 'Achievements', icon: Trophy, path: '/achievements' },
+    { label: 'Chats', icon: MessageCircle, path: '/chats' },
     { label: 'Community', icon: MessageSquare, path: '/community' },
     { label: 'Certificates', icon: Award, path: '/certificates' },
+    { label: 'Subscription', icon: CreditCard, path: '/subscription' },
   ];
+
+  const instructorNavItems = [
+    { label: 'Overview', icon: BarChart3, path: '/instructor' },
+    { label: 'My Courses', icon: BookOpen, path: '/courses' },
+    { label: 'Live Sessions', icon: Video, path: '/live' },
+    { label: 'Achievements', icon: Trophy, path: '/achievements' },
+    { label: 'Chats', icon: MessageCircle, path: '/chats' },
+    { label: 'Community', icon: MessageSquare, path: '/community' },
+  ];
+
+  const navItems = user?.role === UserRole.INSTRUCTOR ? instructorNavItems : studentNavItems;
 
   return (
     <aside className={`${isOpen ? 'w-64' : 'w-20'} bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 h-screen sticky top-0 flex flex-col z-40`}>
@@ -71,7 +96,7 @@ const Sidebar = () => {
 };
 
 const Header = () => {
-  const { user, isDarkMode, toggleDarkMode } = useStore();
+  const { user, isDarkMode, toggleDarkMode, isPro } = useStore();
 
   return (
     <header className="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 px-8 flex items-center justify-between">
@@ -89,9 +114,22 @@ const Header = () => {
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
         
-        <div className="flex items-center space-x-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-full border border-amber-100 dark:border-amber-900/30">
-          <span className="text-amber-600 text-sm font-bold">⚡ {user?.streak} Days</span>
+        {user?.role === UserRole.STUDENT && (
+          <div className="flex items-center space-x-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-full border border-amber-100 dark:border-amber-900/30">
+            <span className="text-amber-600 text-sm font-bold">⚡ {user?.streak} Day Streak</span>
+          </div>
+        )}
+
+        <div className="flex items-center space-x-2 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-full border border-indigo-100 dark:border-indigo-900/30">
+          <Zap size={14} className="text-indigo-600 fill-indigo-600" />
+          <span className="text-indigo-600 text-sm font-bold">{user?.xp.toLocaleString()} XP</span>
         </div>
+
+        {isPro && (
+          <div className="px-3 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest">
+            Pro
+          </div>
+        )}
 
         <button className="relative p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-400">
           <Bell size={20} />
@@ -100,8 +138,8 @@ const Header = () => {
 
         <div className="flex items-center space-x-3 border-l border-slate-200 dark:border-slate-800 pl-6">
           <div className="text-right">
-            <p className="text-sm font-bold dark:text-white">{user?.name}</p>
-            <p className="text-xs text-slate-500 uppercase tracking-wider">{user?.role}</p>
+            <p className="text-sm font-bold dark:text-white leading-none">{user?.name}</p>
+            <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Lvl {user?.level}</p>
           </div>
           <img src={user?.avatar} alt="Avatar" className="w-10 h-10 rounded-xl bg-indigo-100 p-0.5 border border-slate-200 dark:border-slate-700" />
         </div>
@@ -110,7 +148,6 @@ const Header = () => {
   );
 };
 
-// Fixed: children typing updated to avoid 'Property children is missing' errors in some TS environments
 const ProtectedLayout = ({ children }: { children?: React.ReactNode }) => {
   const { user } = useStore();
   if (!user) return <Navigate to="/login" />;
@@ -128,7 +165,6 @@ const ProtectedLayout = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
-// Fixed: Removed React.FC as it is not strictly necessary and can cause issues with children in modern React
 const App = () => {
   const { setCourses, isDarkMode } = useStore();
 
@@ -142,10 +178,16 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
+        <Route path="/instructor" element={<ProtectedLayout><InstructorDashboard /></ProtectedLayout>} />
+        <Route path="/instructor/create-course" element={<ProtectedLayout><CreateCourse /></ProtectedLayout>} />
         <Route path="/courses" element={<ProtectedLayout><CourseLibrary /></ProtectedLayout>} />
         <Route path="/course/:id" element={<ProtectedLayout><CoursePlayer /></ProtectedLayout>} />
         <Route path="/live" element={<ProtectedLayout><LiveClass /></ProtectedLayout>} />
+        <Route path="/chats" element={<ProtectedLayout><Chats /></ProtectedLayout>} />
         <Route path="/community" element={<ProtectedLayout><Community /></ProtectedLayout>} />
+        <Route path="/subscription" element={<ProtectedLayout><Subscription /></ProtectedLayout>} />
+        <Route path="/certificates" element={<ProtectedLayout><Certificates /></ProtectedLayout>} />
+        <Route path="/achievements" element={<ProtectedLayout><Achievements /></ProtectedLayout>} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>
     </Router>

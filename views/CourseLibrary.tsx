@@ -5,10 +5,12 @@ import { useStore } from '../store';
 import { Search, Filter, Star, Clock, Users } from 'lucide-react';
 
 const CourseLibrary = () => {
-  const { courses, setActiveCourse } = useStore();
+  const { courses, setActiveCourse, enrollInCourse, enrolledCourseIds } = useStore();
   const navigate = useNavigate();
 
   const handleEnroll = (course: any) => {
+    // Add to enrolled list if not already there
+    enrollInCourse(course.id);
     setActiveCourse(course);
     navigate(`/course/${course.id}`);
   };
@@ -36,55 +38,63 @@ const CourseLibrary = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {courses.map((course) => (
-          <div 
-            key={course.id} 
-            className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 group cursor-pointer"
-            onClick={() => handleEnroll(course)}
-          >
-            <div className="relative h-56 overflow-hidden">
-              <img src={course.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                <button className="w-full py-3 bg-white text-slate-900 font-bold rounded-xl transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                  Enroll Now
-                </button>
-              </div>
-              <div className="absolute top-4 left-4">
-                <span className="bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                  {course.category}
-                </span>
-              </div>
-            </div>
-            
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center text-amber-500 font-bold text-sm">
-                  <Star size={16} className="mr-1 fill-amber-500" />
-                  {course.rating}
+        {courses.map((course) => {
+          const isEnrolled = enrolledCourseIds.includes(course.id);
+          return (
+            <div 
+              key={course.id} 
+              className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300 group cursor-pointer"
+              onClick={() => handleEnroll(course)}
+            >
+              <div className="relative h-56 overflow-hidden">
+                <img src={course.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                  <button className="w-full py-3 bg-white text-slate-900 font-bold rounded-xl transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                    {isEnrolled ? 'Resume Course' : 'Enroll Now'}
+                  </button>
                 </div>
-                <div className="flex items-center text-slate-400 text-xs">
-                  <Users size={14} className="mr-1" />
-                  {course.enrolled.toLocaleString()} Enrolled
+                <div className="absolute top-4 left-4">
+                  <span className="bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                    {course.category}
+                  </span>
                 </div>
-              </div>
-
-              <h3 className="text-xl font-bold dark:text-white mb-2 line-clamp-1">{course.title}</h3>
-              <p className="text-slate-500 text-sm line-clamp-2 mb-6 h-10">{course.description}</p>
-              
-              <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 mr-3 overflow-hidden">
-                    <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${course.instructor}`} />
+                {isEnrolled && (
+                  <div className="absolute top-4 right-4 bg-green-500 text-white text-[10px] font-bold uppercase px-2 py-1 rounded-lg">
+                    Enrolled
                   </div>
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{course.instructor}</span>
+                )}
+              </div>
+              
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center text-amber-500 font-bold text-sm">
+                    <Star size={16} className="mr-1 fill-amber-500" />
+                    {course.rating}
+                  </div>
+                  <div className="flex items-center text-slate-400 text-xs">
+                    <Users size={14} className="mr-1" />
+                    {course.enrolled.toLocaleString()} Enrolled
+                  </div>
                 </div>
-                <div className="text-xl font-black text-indigo-600">
-                  ${course.price}
+
+                <h3 className="text-xl font-bold dark:text-white mb-2 line-clamp-1">{course.title}</h3>
+                <p className="text-slate-500 text-sm line-clamp-2 mb-6 h-10">{course.description}</p>
+                
+                <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 mr-3 overflow-hidden">
+                      <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${course.instructor}`} alt={course.instructor} />
+                    </div>
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{course.instructor}</span>
+                  </div>
+                  <div className="text-xl font-black text-indigo-600">
+                    ${course.price}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -5,6 +5,16 @@ export enum UserRole {
   ADMIN = 'ADMIN'
 }
 
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  unlockedAt?: number;
+  requirement: string;
+  category: 'learning' | 'social' | 'streak' | 'special';
+}
+
 export interface User {
   id: string;
   name: string;
@@ -12,8 +22,17 @@ export interface User {
   role: UserRole;
   avatar: string;
   xp: number;
+  level: number;
   streak: number;
-  badges: string[];
+  badges: string[]; // IDs of unlocked badges
+  lastLogin?: number;
+}
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  answer: number;
 }
 
 export interface Course {
@@ -42,6 +61,7 @@ export interface Lecture {
   videoUrl: string;
   isCompleted: boolean;
   type: 'video' | 'pdf' | 'quiz';
+  quizQuestions?: QuizQuestion[];
 }
 
 export interface ChatMessage {
@@ -53,6 +73,17 @@ export interface ChatMessage {
   isMe?: boolean;
 }
 
+export interface Contact {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+  status: 'online' | 'offline' | 'away';
+  lastMessage?: string;
+  lastMessageTime?: string;
+  unreadCount?: number;
+}
+
 export interface LiveParticipant {
   id: string;
   name: string;
@@ -60,4 +91,13 @@ export interface LiveParticipant {
   isMuted: boolean;
   isVideoOff: boolean;
   isRaisingHand: boolean;
+}
+
+export interface LeaderboardEntry {
+  id: string;
+  name: string;
+  avatar: string;
+  xp: number;
+  rank: number;
+  isMe?: boolean;
 }
