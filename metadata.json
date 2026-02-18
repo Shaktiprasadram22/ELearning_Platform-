@@ -1,0 +1,8 @@
+{
+  "name": "Lumina Learn",
+  "description": "A comprehensive, high-performance E-Learning platform featuring simulated live classes, real-time chat, AI-driven doubt solving, and a robust gamification system.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
